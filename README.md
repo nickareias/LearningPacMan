@@ -1,5 +1,5 @@
-#This is LearningPacMan
-# 
+#This is Learning Pac Man
+[click here to watch!]http://nickareias.github.io/LearningPacMan/ 
 ####Pac man will learn how to beat a randomly generated stage by doing a depth first search through the possible moves in the game.  The ghosts move according to the same rules as in the arcade game.  Their paths are predetermined by the way that pac-man moves.  There is no random chance involved.
 #
 ####Pac-Man's heuristic for traversing the level is that he will always try to go in the direction that leads to the best point/movement ratio.
