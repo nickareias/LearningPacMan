@@ -2234,7 +2234,8 @@ function render()
 	jsg.setColor("yellow");
 	jsg.fillEllipse(Math.floor(pacManX), Math.floor(pacManY),gridSize,gridSize);
 	jsg.setColor("black");
-	jsg.fillEllipse(Math.floor(pacManX), Math.floor(pacManY),gridSize/2,gridSize/2);
+	jsg.fillEllipse(Math.floor(pacManX)+gridSize/2, Math.floor(pacManY),gridSize/4,gridSize/4);
+	jsg.fillEllipse(Math.floor(pacManX)+gridSize/2, Math.floor(pacManY)+gridSize*3/4,gridSize/4,gridSize/4);
 	//jsg.fillEllipse(pacManX + gridSize / 6, pacManY + gridSize / 6, gridSize / 3, gridSize / 3);
 	
 	//Draw red ghost
