@@ -2233,6 +2233,8 @@ function render()
 	//Draw the man
 	jsg.setColor("yellow");
 	jsg.fillEllipse(Math.floor(pacManX), Math.floor(pacManY),gridSize,gridSize);
+	jsg.setColor("black");
+	jsg.fillEllipse(Math.floor(pacManX), Math.floor(pacManY),gridSize/2,gridSize/2);
 	//jsg.fillEllipse(pacManX + gridSize / 6, pacManY + gridSize / 6, gridSize / 3, gridSize / 3);
 	
 	//Draw red ghost
