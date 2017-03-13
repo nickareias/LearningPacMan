@@ -6,7 +6,7 @@
 //	a level, once it is generated, he will have the same path to completing it every time.
 //
 //	The same could be done with all different kinds of environments.
-//	Learning what not to do after mistakes are made seems to be a good way to 
+//	Learning what not to do after mistakes are made is one possible way 
 // 	understand an environment
 //
 //	Learning is a process that we can understand.  
@@ -17,7 +17,6 @@
 //		2) 	Use that information to determine if the decision was good or bad
 //		3)	Store results of decisions.
 //		4)	Use results and logic to determine future decisions
-//
 
 //**************//
 // DATA SECTION //
@@ -185,37 +184,6 @@
 			coinLocations[i][j] = 0;
 		}
 	}
-	
-	/*
-	//	These for loops will add in the passable locations of the grid
-	//	excluding the spaces outside the boundaries
-	for(var i = 1; i < 15; i++)
-	{
-		for(var j = 2; j < 20; j++)
-		{
-			//initialize every location to 1 to assume all coordinates
-			//are passable
-			passableLocations[i][j] = 1;
-			
-			//initialize coins
-			coinLocations[i][j] = 1;
-		}
-	}
-	*/
-	
-	
-	
-	//Check whats in the arrays
-	/*
-	for(var i = 0; i < 16; i++)
-	{
-		for(var j = 0; j < 21; j++)
-		{
-			document.write(passableLocations[i][j]);
-		}
-		document.write("\n");
-	}
-	*/
 	
 	//maxIndex marks the top of the decision and time stacks
 	var maxIndex = -1; // not reset after a loss	
@@ -479,31 +447,6 @@ function learn(time)
 	
 	if(!collision)	//If PacMan is learning after a normal move, just trying to go after coins
 	{
-		//If PacMan is running from a ghost that he died to earlier, make sure he doesn't turn around
-		//to run into it until he has made a turn.
-		//have a global flag variable that is set to show pacman is running away, then set it to false
-		//when he turns in a different direction in this function.
-		/*
-		if(pacManRunAway)
-		{
-			if(decisionsStack[maxIndex - 1].left == 1)
-			{
-				decision.right = -1;
-			}
-			if(decisionsStack[maxIndex - 1].right == 1)
-			{
-				decision.left = -1;
-			}
-			if(decisionsStack[maxIndex - 1].up == 1)
-			{
-				decision.down = -1;
-			}
-			if(decisionsStack[maxIndex - 1].down == 1)
-			{
-				decision.up = -1;
-			}
-		}
-		*/
 		//Check to see if there are walls around pacman.  Invalidate decisions that would make him run into a wall
 		if(passableLocations[pacManIndexX + 1][pacManIndexY] == 0)
 		{
@@ -756,14 +699,6 @@ function learn(time)
 		//If a decision is evaluated to have no possible options, it will be popped off the stack, and the decision previous to that
 		//one will be evaluated.  This should be able to continue back until pacMan finds a valid decision.
 		
-		//Assign the values of the previous decision to the temporary decision of this function.
-		/*
-		decision.left = decisionsStack[maxIndex].left;
-		decision.right = decisionsStack[maxIndex].right;
-		decision.up = decisionsStack[maxIndex].up;
-		decision.down = decisionsStack[maxIndex].down;
-		*/
-		
 		//Set decision equal to decisionsStack.  This sets it equal by reference, not by value
 		//That is ok because we are modifying it in place, it will stay in the stack, we will just modify it.
 		decision = decisionsStack[maxIndex];
@@ -832,13 +767,13 @@ function learn(time)
 //	This function is called every iteration of the game loop
 function update()
 {
-	
-
-	//For any RNG based decisions
+	//For any RNG based decisions for pac man
+	//sometimes pac man comes to a tie between two
+	//decisions and needs to flip a coint to choose
 	var randomFactor = Math.random();
 	
 	//**************//
-	// Move The Man //
+	// Move Pac Man //
 	//**************//
 	//	This function will take care of everything that involves moving the man
 	//	It will handle collision checking and commit changes to his position
@@ -905,36 +840,15 @@ function update()
 					keepGoing = false;
 					currentIndex++;
 				}
-				//currentIndex++;
 			}					
 		}
-		
-		
-		
-		
 		
 		//if pac man has no movement instructions, give him one by default
 		if(pacManMoveHorizontal == 0 && pacManMoveVertical == 0)
 		{
 			pacManMoveHorizontal = 1;	//start moving to the right
 		}
-		
-		
-		/*
-		//Do collision checking before actually moving
-		//It will explicitly only be called when it is not a decision square
-		if((pacManIndexX == pacManTempIndexX) && (pacManIndexY == pacManTempIndexY))
-		{
-			if(passableLocations[pacManIndexX][pacManIndexY] != 2)
-			{
-				checkHorizontal();
-				checkVertical();
-			}
-		}
-		*/
-			//if pac man gets to a time where he must make a different decision
-		
-		
+				
 		//If pac man has died once he must execute previous decisions.
 		//He will move until the timer is equal to the next time in the time stack.
 		//Then he will make the decision that is stored at the current index.
@@ -963,26 +877,14 @@ function update()
 		//We must also be careful when learning from a collision that we go back far enough.
 		
 		//If pac man has completed all instructions, allow him to learn new decisions
-		//if((maxIndex >= 0) && (currentIndex > 0))
-		//{
-			if((timer > timesStack[maxIndex]) || (maxIndex == -1))
+		if((timer > timesStack[maxIndex]) || (maxIndex == -1))
+		{
+			//if pac man is precicely on a tile
+			if((pacManIndexX == pacManTempIndexX) && (pacManIndexY == pacManTempIndexY))
 			{
-				//if pac man is precicely on a tile
-				if((pacManIndexX == pacManTempIndexX) && (pacManIndexY == pacManTempIndexY))
-				{
-					//if pac man is on a decision tile
-					//if(passableLocations[pacManTempIndexX][pacManTempIndexY] == 2)
-					//{
-						//alert("LEARN FROM DECISION TILE: " + maxIndex);
-						learn(timer);
-					//}
-				}
+				learn(timer);
 			}
-		//}
-		
-		//temporary indices to do precise movements
-		//pacManTempIndexX = pacManIndexX;
-		//pacManTempIndexY = pacManIndexY;
+		}
 		
 		pacManTempIndexX += (pacManMoveHorizontal/4);
 		pacManTempIndexY += (pacManMoveVertical/4);
@@ -998,16 +900,7 @@ function update()
 			pacManIndexY = pacManTempIndexY;
 		}
 		
-		
-		
-		
-		/*
-		//make pac man move based on his movement instructions
-		pacManIndexX += (pacManMoveHorizontal);
-		pacManIndexY += (pacManMoveVertical);
-		*/
-		
-		//get coins
+		//get coin on pacman's space
 		coinLocations[pacManIndexX][pacManIndexY] = 0;
 	
 		//Check to see if pacMan has won
@@ -1032,27 +925,8 @@ function update()
 			{
 				doRender = true;
 				doReset = true;
-				/*
-				var r = confirm("Would you like to watch the learning process for this level?\nPress OK if yes\nPress Cancel if no");
-				if (r == true) {
-					maxIndex = -1;
-					currentIndex = -1;
-					losses = 0;
-				}
-				*/
 			}
-			
-			
-			/*
-			if(!noWin && !doRender)
-			{
-				doRender = true;
-				resetGame();
-			}
-			*/
-			
-			
-			
+
 			//Check to see if the level was impossible to win
 			if(timer > 20000)
 			{
@@ -1291,81 +1165,6 @@ function update()
 					ghost.MoveVertical = 1;
 				}
 			}
-			
-			/*
-			// FOR DEBUG //
-			//	Add decision to a stack to check for accuracy
-			// 	0 = right, 1 = left, 2 = up, 3 = down.
-			if(ghost.name == "red")
-			{
-				var tempDecision;
-				
-				if(ghost.MoveHorizontal == 1)
-				{
-					tempDecision = 0;
-				}
-				else if(ghost.MoveHorizontal == -1)
-				{
-					tempDecision = 1;
-				}
-				else if(ghost.MoveVertical == -1)
-				{
-					tempDecision = 2;
-				}
-				else if(ghost.MoveVertical == 1)
-				{
-					tempDecision = 3;
-				}
-			
-				if(redGhostDecisionIndex >= redGhostDecisionTop)
-				{
-					if(ghost.MoveHorizontal == 1)
-					{
-						redGhostDecisionStack.push(0);
-						redGhostDecisionTop++;
-					}
-					else if(ghost.MoveHorizontal == -1)
-					{
-						redGhostDecisionStack.push(1);
-						redGhostDecisionTop++;
-					}
-					else if(ghost.MoveVertical == -1)
-					{
-						redGhostDecisionStack.push(2);
-						redGhostDecisionTop++;
-					}
-					else if(ghost.MoveVertical == 1)
-					{
-						redGhostDecisionStack.push(3);
-						redGhostDecisionTop++;
-					}
-					redGhostDecisionXYStack.push("(" + redGhost.X + ", " + redGhost.Y + ")");
-					
-				}
-				else	//Else check existing decision stack against decision that was just made
-				{
-					if((redGhostDecisionStack[redGhostDecisionIndex] != tempDecision) || ((redGhostDecisionXYStack[redGhostDecisionIndex] != ("(" + redGhost.X + ", " + redGhost.Y + ")")) || (redGhostDecisionXYStack[redGhostDecisionIndex] != ("(" + redGhost.X + ", " + redGhost.Y + ")"))))
-					{
-						var string = "INCONSISTENT DECISION HAS BEEN MADE\n" + "Previous Decision: " + redGhostDecisionStack[redGhostDecisionIndex] + "\nCurrent Decision: " + tempDecision + "\nCurrent Decision Index: " + redGhostDecisionIndex + "\nX: " + redGhost.X + "\nY: " + redGhost.Y + "\n\nPrevious X,Y: " + redGhostDecisionXYStack[redGhostDecisionIndex] + "\n\nHMove before decision: " + tempMoveHorizontal + "\nVMove before decision: " + tempMoveVertical + "\nrightOpen: " + rightOpen + "\nleftOpen: " + leftOpen + "\nupOpen: " + upOpen + "\ndownOpen: " + downOpen;
-						alert(string);
-						
-						var string2 = "Decision Stack: \n";
-						for(var i = 0; i <= redGhostDecisionIndex; i++)
-						{
-							string2 = string2 + "\n" + i + ": " + redGhostDecisionStack[redGhostDecisionIndex];
-						}
-						alert(string2);
-						
-						pause = true;
-					}
-				}
-				redGhostDecisionIndex++;
-			}//if ghost is red
-			
-			//redGhostDecisionStack.push();
-			*/
-			
-			
 		}//makeDecision
 	
 	
@@ -1479,8 +1278,6 @@ function update()
 	//	After movement has been decided, figure out actual coordinates of objects
 	//********
 	
-	
-	
 	//Actual coordinates of pacman.
 	pacManY = gridSize * pacManTempIndexY;
 	pacManX = gridSize * pacManTempIndexX;
@@ -1559,9 +1356,9 @@ function update()
 //****************//
 // GENERATE LEVEL //
 //****************//
-//	This function will send out a "snake" to create a path through the level.
-//	The tiles that the snke passes through will become passable locations
-//	while the ones it doesn't touch will become obstacles.
+//	This function will send out 2 "snakes" to create a path through the level.
+//	The tiles that the snakes pass through will become passable locations
+//	while the ones they don't touch will become obstacles.
 //	This function will make sure that there is a complete path through the level
 function generateLevel()
 {
@@ -1954,56 +1751,6 @@ function generateLevel()
 					var tempSnakeMoveVertical = 0;
 					var tempGo = true;
 					
-					/*
-					while(tempGo)
-					{
-						if((i + tempSnakeMoveHorizontal > 0) && (i + tempSnakeMoveHorizontal < 15))
-						{
-							if((j + tempSnakeMoveVertical > 1) && (j + tempSnakeMoveVertical < 20))
-							{
-								if(passableLocations[i + tempSnakeMoveHorizontal][j + tempSnakeMoveVertical] == 0)
-								{
-									tempSnakeX += tempSnakeMoveHorizontal;
-									tempSnakeY += tempSnakeMoveVertical;
-									
-									passableLocations[tempSnakeX][tempSnakeY] = 1;
-								}
-								else
-								{
-									tempGo = false;
-								}
-							}
-							else // else turn
-							{
-								//if snake can move left go left
-								if(tempSnakeX - 1 > 0)
-								{
-									tempSnakeMoveHorizontal = -1;
-									tempSnakeMoveVertical = 0;
-								}
-								else //if it cant, then move right
-								{
-									tempSnakeMoveHorizontal = 1;
-									tempSnakeMoveVertical = 0;
-								}
-							}
-						}
-						else // else turn
-						{
-							//if snake can move up go up
-							if(tempSnakeY + 1 > 1)
-							{
-								tempSnakeMoveHorizontal = 0;
-								tempSnakeMoveVertical = -1;
-							}
-							else //if it cant, then move down
-							{
-								tempSnakeMoveHorizontal = 0;
-								tempSnakeMoveVertical = 1;
-							}
-						}
-					}//while tempGo;
-					*/
 				}
 			}
 		}
@@ -2120,21 +1867,6 @@ function render()
 		}
 	}
 
-	/*
-	//Call makeObstacle
-	makeObstacle(7,2,2,3);
-	makeObstacle(7,6,2,2);
-	makeObstacle(7,9,2,2);
-	makeObstacle(2,3,4,2);
-	makeObstacle(2,6,4,2);
-	makeObstacle(10,3,4,2);
-	makeObstacle(10,6,4,2);
-	makeObstacle(2,9,4,2);
-	makeObstacle(10,9,4,2);
-	makeObstacle(1,12,14,1);
-	*/
-	
-	
 	//	Make "Decision" tiles at spaces where a turn could be made
 	//	This will designate certain grid coordinates as "decision" tiles
 	//	When a ghost is in one of these spaces it will be told to make a decision
@@ -2147,45 +1879,6 @@ function render()
 		jsg.fillRect(xCoord * gridSize, yCoord * gridSize,gridSize,gridSize);
 	}
 	
-	/*
-	makeDecisionTile(1,5);
-	makeDecisionTile(1,8);
-	makeDecisionTile(6,5);
-	makeDecisionTile(6,8);
-	makeDecisionTile(9,5);
-	makeDecisionTile(9,8);
-	makeDecisionTile(14,5);
-	makeDecisionTile(14,8);
-	//makeDecisionTile(6,2);
-	//makeDecisionTile(9,2);
-	makeDecisionTile(6,11);
-	makeDecisionTile(9,11);
-	*/
-	
-	
-	
-	
-	//passableLocations[8][2] = 0;
-	//passableLocations[8][3] = 0;
-	//passableLocations[8][4] = 0;
-	
-	/*
-	//render the coins
-	//	These for loops will go through the elements of the grid and add coins
-	for(var i = 1; i < 15; i++)
-	{
-		for(var j = 2; j < 20; j++)
-		{
-			
-			if(coinLocations[i][j] == 1)
-			{
-				jsg.setColor("gold");
-				jsg.fillEllipse(i * gridSize + gridSize  * 3/8, j * gridSize + gridSize * 3/8, gridSize / 4, gridSize / 4);
-			}
-		}
-	}
-	*/
-		
 	//Draw all elements of the level
 	//level is 16 x 21 grid.  It will be randomly constructed with a path and obstacles.
 	//Then this loop will go through and see which tile is which and draw the appropriate tile
@@ -2220,23 +1913,9 @@ function render()
 		}
 	}
 	
-	/*
-	//Shows target square of red ghost
-	jsg.setColor("#FF8A8A");
-	jsg.fillRect(redGhost.TargetX * gridSize, redGhost.TargetY * gridSize,gridSize,gridSize);
-	
-	//Shows target square of red ghost2
-	jsg.setColor("#828282");
-	jsg.fillRect(redGhost2.TargetX * gridSize, redGhost2.TargetY * gridSize,gridSize,gridSize);
-	*/
-	
-	//Draw the man
+	//Draw pac man
 	jsg.setColor("yellow");
 	jsg.fillEllipse(Math.floor(pacManX), Math.floor(pacManY),gridSize,gridSize);
-	//jsg.setColor("black");
-	//jsg.fillEllipse(Math.floor(pacManX)+gridSize/2, Math.floor(pacManY),gridSize/4,gridSize/4);
-	//jsg.fillEllipse(Math.floor(pacManX)+gridSize/2, Math.floor(pacManY)+gridSize*3/4,gridSize/4,gridSize/4);
-	//jsg.fillEllipse(pacManX + gridSize / 6, pacManY + gridSize / 6, gridSize / 3, gridSize / 3);
 	
 	//Draw red ghost
 	jsg.setColor("red");
@@ -2257,24 +1936,6 @@ function render()
 	//Commit to painting all drawings on the screen
 	jsg.paint();
 }//render()
-
-/*
-//Check user input
-function checkButtons()
-{
-	if(document.getElementById("yes").checked)
-	{
-		doRender = true;
-		ready = true;
-	}
-	else if(document.getElementById("no").checked)
-	{
-		doRender = false;
-		ready = true;
-	}
-	
-}
-*/
 
 
 function game()
