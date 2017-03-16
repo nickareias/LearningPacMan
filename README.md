@@ -4,4 +4,4 @@
 #
 #### Pac-Man's heuristic for traversing the level is that he will always try to go in the direction that leads to the best point/movement ratio.
 #	
-#### Because of the way the levels are randomly generated, the ghosts will sometimes get stuck in a loop.  This can cause the game to be unwinnable.  In a case like this, just refresh the page and try a different level layout.
+#### The randomly generated levels are different from the original pac-man game, so the ghosts will sometimes get stuck in a loop.  This can cause the game to be unwinnable.  In a case like this, just refresh the page and try a different level layout.
